@@ -1,6 +1,6 @@
 var mocker = require('mocker-data-generator').default;
 
-var resultObjectCount = parseInt(process.argv[3]);
+var resultObjectCount = parseInt(process.argv[4]);
 
 var config = {
     groups: parseInt(process.argv[2]),
