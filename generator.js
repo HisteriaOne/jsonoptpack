@@ -55,4 +55,4 @@ for (var i = 0; i < structure.length; i++) {
     }
 }
 
-mocker().schema('data', template, 10).build().then(data => console.log(JSON.stringify(data)));
+mocker().schema('data', template, 10).build().then(data => console.log(JSON.stringify(data.data)));
