@@ -1,0 +1,2 @@
+# jsonoptpack
+JSON compression library
