@@ -21,7 +21,7 @@ function generateStructure() {
     for (var i = 0; i < config.groups; i++) {
         var fields = [];
         for (var j = 0; j < config.fields; j++) {
-            fields.push()
+            fields.push(['f' + i + '' +j, fieldTypes[getRandomInt(3)]])
         }
         result.push(fields);
     }
@@ -29,19 +29,18 @@ function generateStructure() {
     return result;
 }
 
-console.log(generateStructure());
-
 function generateFieldTemplte(field, index) {
-    var newObj = new Object();
-    var name = 'object.rnd === ' + index + ',' + field[0];
-    newObj[name] = field[1];
-    return newObj;
+    return ['object.rnd === ' + index + ',' + field[0], field[1]];
 }
 
 var structure = generateStructure();
+var template = { rnd: { function: function() { return getRandomInt(config.groups); }, virtual: true}};
 
 for (var i = 0; i < structure.length; i++) {
     for (var j = 0; j < structure[i].length; j++) {
-        generateFieldTemplte(structure[i][j], i);
+        var field = generateFieldTemplte(structure[i][j], i);
+        template[field[0]] = field[1];
     }
 }
+
+mocker().schema('_', template, 10).build().then(data => console.log(data));
