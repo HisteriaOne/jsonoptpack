@@ -2,19 +2,64 @@
 
 var jsonoptpack = function()
 {
-  var appendData = function(out, data)
+  function prepareStrings(strings, index, object)
   {
-    // TODO
+    var a = object[1]
+
+    for (var i in a) {
+      var s = a[i]
+      var v = strings[s]
+      if (typeof v === "undefined") {
+        strings[s] = index++
+      } else {
+        var x = String(v)
+        if (x.length + 1 < s.length) { a[i] = "@" + v }
+      }
+    }
+
+    return index
   }
 
-  var appendObjects = function(out, objects, data)
+  function appendData(out, objects)
+  {
+    var strings = {}
+    var index = 0
+
+    for (var k in objects) {
+      var m = objects[k][1]
+      for (var l in m) {
+        var object = m[l]
+        if (object[0] === 1) { out.push(object[1].join("")) }
+      }
+    }
+
+    for (var k in objects) {
+      var m = objects[k][1]
+      for (var l in m) {
+        var object = m[l]
+        if (object[0] === 2) { out.push(object[1].join("|")) }
+      }
+    }
+
+    for (var k in objects) {
+      var m = objects[k][1]
+      for (var l in m) {
+        var object = m[l]
+        if (object[0] === 3) {
+          index = prepareStrings(strings, index, object)
+          out.push(object[1].join("|"))
+        }
+      }
+    }
+  }
+
+  function appendObjects(out, objects, data)
   {
     if (data === null) { return }
 
     findObjects(objects, data)
 
     var i = 0
-
     var f = out.length
     out.push(0)
 
@@ -31,14 +76,14 @@ var jsonoptpack = function()
     for (var k in objects) {
       var m = objects[k][1]
       for (var l in m) {
-        dt.push(m[l])
+        dt.push(m[l][0])
         out.push(l)
       }
     }
     out[f] = dt.join("")
   }
 
-  var appendSchema = function(out, objects, data)
+  function appendSchema(out, objects, data)
   {
     if (data === null || typeof data !== "object") { return }
 
@@ -50,7 +95,6 @@ var jsonoptpack = function()
     var objectkeys = {}
     var ol = 0
     for (var k in objects) { objectkeys[k] = ol++ }
-    console.log(objectkeys)
 
     out.push("a" + data.length)
 
@@ -94,7 +138,7 @@ var jsonoptpack = function()
     out.push(sz.join(data.length <= 9 ? "" : "|"))
   }
 
-  var findObjects = function(objects, data)
+  function findObjects(objects, data)
   {
     if (data === null || typeof data !== "object") { return }
 
@@ -103,18 +147,32 @@ var jsonoptpack = function()
       return
     }
 
-    var i = 0
-    var m = {}
-    for (var k in data) {
-      i++
-      m[k] = getDatatype(data[k])
+    var x = getObjectKey(data)
+    var m
+    if (typeof objects[x] === "undefined") {
+      var i = 0
+      m = {}
+      for (var k in data) {
+        i++
+        m[k] = [getDatatype(data[k]), []]
+      }
+      objects[x] = [i, m]
+    } else {
+      m = objects[x][1]
     }
-    objects[getObjectKey(data)] = [i, m]
+
+    for (var k in data) {
+      var v = data[k]
+      var t = typeof v
+      if (t === "object") { continue }
+      if (t === "boolean") { v = v ? 1 : 0 }
+      m[k][1].push(v)
+    }
 
     for (var k in data) { findObjects(objects, data[k]) }
   }
 
-  var getDatatype = function(value)
+  function getDatatype(value)
   {
     if (value === null) { return 0 }
 
@@ -125,14 +183,14 @@ var jsonoptpack = function()
     if (typeof value === "object")  { return 5 }
   }
 
-  var getObjectKey = function(object)
+  function getObjectKey(object)
   {
     var a = []
     for (var k in object) { a.push(k, getDatatype(object[k])) }
     return a.join("|")
   }
 
-  var unpackObjects = function(a, index, objects)
+  function unpackObjects(a, index, objects)
   {
     if (a.length === 0) { return }
 
@@ -159,36 +217,35 @@ var jsonoptpack = function()
     return index
   }
 
-  return {
-    pack: function(data)
-    {
-      var out = []
+  function pack(data)
+  {
+    var out = []
 
-      var objects = {}
-      appendObjects(out, objects, data)
-      console.log(objects)
+    var objects = {}
+    appendObjects(out, objects, data)
 
-      appendSchema(out, objects, data)
-      appendData(out, data)
+    appendSchema(out, objects, data)
+    appendData(out, objects)
 
-      return out.join("|")
-    },
-
-    unpack: function(str)
-    {
-      if (typeof str !== "string") { return str }
-
-      // TODO: strings can contain symbol "|", it means we must implement own splitter with handling "\|" and "\\"
-      var a = str.split("|")
-
-      var objects = []
-      var i = unpackObjects(a, 0, objects)
-
-      console.log(objects)
-
-      return null // TODO
-    }
+    return out.join("|")
   }
+
+  function unpack(str)
+  {
+    if (typeof str !== "string") { return str }
+
+    // TODO: strings can contain symbol "|", it means we must implement own splitter with handling "\|" and "\\"
+    var a = str.split("|")
+
+    var objects = []
+    var i = unpackObjects(a, 0, objects)
+
+    console.log(objects)
+
+    return null // TODO
+  }
+
+  return {pack: pack, unpack: unpack}
 }()
 
 if (typeof module != "undefined" && module.exports) { module.exports = jsonoptpack }

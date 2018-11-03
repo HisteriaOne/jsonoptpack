@@ -13,10 +13,11 @@ var test = [
   {"a": "string0", "b": 40},
   {"a": "string1", "b": 41},
   {"c": true, "d": 45, "e": "string2"},
+  {"c": false, "d": 46, "e": "string2"},
   {"a": "string2", "b": 42}
 ]
 
-console.log(test)
+console.log(JSON.stringify(test))
 
 var px = jsonoptpack.pack(test)
 console.log(px)
