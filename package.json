@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/HisteriaOne/jsonoptpack/issues"
   },
-  "homepage": "https://github.com/HisteriaOne/jsonoptpack#readme"
+  "homepage": "https://github.com/HisteriaOne/jsonoptpack#readme",
+  "dependencies": {
+    "mocker-data-generator": "^2.6.6"
+  }
 }
