@@ -1,5 +1,7 @@
 var mocker = require('mocker-data-generator').default;
 
+var resultObjectCount = parseInt(process.argv[3]);
+
 var config = {
     groups: parseInt(process.argv[2]),
     fields: parseInt(process.argv[3])
@@ -55,4 +57,4 @@ for (var i = 0; i < structure.length; i++) {
     }
 }
 
-mocker().schema('data', template, 10).build().then(data => console.log(JSON.stringify(data.data)));
+mocker().schema('data', template, resultObjectCount).build().then(data => console.log(JSON.stringify(data.data)));
