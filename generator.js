@@ -30,7 +30,7 @@ function generateStructure() {
 }
 
 function generateFieldTemplte(field, index) {
-    return ['object.rnd === ' + index + ',' + field[0], field[1]];
+    return ['object.rnd === ' + index + ',' + field[0]+'', field[1]];
 }
 
 var structure = generateStructure();
@@ -43,4 +43,4 @@ for (var i = 0; i < structure.length; i++) {
     }
 }
 
-mocker().schema('_', template, 10).build().then(data => console.log(data));
+mocker().schema('data', template, 10).build().then(data => console.log(JSON.stringify(data)));
