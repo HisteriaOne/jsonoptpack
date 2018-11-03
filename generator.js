@@ -1,8 +1,8 @@
 var mocker = require('mocker-data-generator').default;
 
 var config = {
-    groups: 3,
-    fields: 2
+    groups: parseInt(process.argv[2]),
+    fields: parseInt(process.argv[3])
 };
 
 var fieldTypes = [{
