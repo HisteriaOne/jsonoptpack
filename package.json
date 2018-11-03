@@ -21,6 +21,6 @@
   },
   "homepage": "https://github.com/HisteriaOne/jsonoptpack#readme",
   "dependencies": {
-    "dummy-json": "^2.0.0"
+    "mocker-data-generator": "^2.6.6"
   }
 }
