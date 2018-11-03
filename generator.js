@@ -5,10 +5,15 @@ var config = {
     fields: 2
 };
 
-var fieldTypes = [
-    {chance: 'bool'},
-    {chance: 'string'},
-    {chance: 'integer'}
+var fieldTypes = [{
+        chance: 'bool'
+    },
+    {
+        chance: 'string'
+    },
+    {
+        chance: 'integer'
+    }
 ];
 
 function getRandomInt(max) {
@@ -21,7 +26,7 @@ function generateStructure() {
     for (var i = 0; i < config.groups; i++) {
         var fields = [];
         for (var j = 0; j < config.fields; j++) {
-            fields.push(['f' + i + '' +j, fieldTypes[getRandomInt(3)]])
+            fields.push(['f' + i + '' + j, fieldTypes[getRandomInt(3)]])
         }
         result.push(fields);
     }
@@ -30,11 +35,18 @@ function generateStructure() {
 }
 
 function generateFieldTemplte(field, index) {
-    return ['object.rnd === ' + index + ',' + field[0]+'', field[1]];
+    return ['object.rnd === ' + index + ',' + field[0] + '', field[1]];
 }
 
 var structure = generateStructure();
-var template = { rnd: { function: function() { return getRandomInt(config.groups); }, virtual: true}};
+var template = {
+    rnd: {
+        function: function () {
+            return getRandomInt(config.groups);
+        },
+        virtual: true
+    }
+};
 
 for (var i = 0; i < structure.length; i++) {
     for (var j = 0; j < structure[i].length; j++) {
